@@ -52,8 +52,7 @@ class Nav extends Component {
     this.handleNewCourse = this.handleNewCourse.bind(this);
   }
 
-  async handleNewDefinition(term, definition, courseName) {
-    const course = this.props.courses.find((c) => c.title === courseName);
+  async handleNewDefinition(term, definition, course) {
     try {
       await axios.post('http://localhost:5000/alldefinitions', {
         term,
@@ -63,8 +62,8 @@ class Nav extends Component {
     } catch (err) {
       console.log(err);
     }
-    //a very janky way of re-rendering ListDefs.js when adding a new definition.
-    //function is passed from App.js
+    // a very janky way of re-rendering ListDefs.js when adding a new definition.
+    // function is passed from App.js
     this.props.setUpdateDefsTrue();
   }
 

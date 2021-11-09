@@ -15,7 +15,7 @@ class NewDefinition extends Component {
     this.state = {
       term: '',
       definition: '',
-      courseName: ''
+      course: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -31,15 +31,19 @@ class NewDefinition extends Component {
     this.props.handleAdd(
       this.state.term,
       this.state.definition,
-      this.state.courseName
+      JSON.parse(this.state.course)
     );
+    this.setState({ term: '', definition: '', course: '' });
   }
 
   render() {
-    const { courseName } = this.state;
+    const { course } = this.state;
     const { open, handleClose, courses } = this.props;
     const menuItems = courses.map((course) => (
-      <MenuItem value={course.title} key={course._id}>
+      <MenuItem
+        value={JSON.stringify({ title: course.title, _id: course._id })}
+        key={course._id}
+      >
         {course.title}
       </MenuItem>
     ));
@@ -76,8 +80,9 @@ class NewDefinition extends Component {
             <Select
               labelId='course-label'
               id='course-select'
-              name='courseName'
-              value={courseName}
+              name='course'
+              value={course || ''} // THIS IS NEEDED FOR STRINGIFIED OBJECT
+              defaultValue={''}
               onChange={this.handleChange}
               fullWidth
             >
