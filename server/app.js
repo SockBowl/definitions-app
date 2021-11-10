@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 app.get(
   '/alldefinitions',
   catchAsync(async (req, res) => {
-    const defs = await Definition.find({});
+    const defs = await Definition.find({}).populate('course', 'title');
     res.send(defs);
   })
 );
@@ -53,7 +53,7 @@ app.post(
     const newDef = new Definition(req.body);
     await newDef.save();
     await Course.findByIdAndUpdate(
-      { _id: req.body.courseId },
+      { _id: req.body.course },
       { $push: { definitions: newDef._id } }
     );
     res.send(newDef);
@@ -75,7 +75,7 @@ app.get(
   '/alldefinitions/:id',
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const def = await Definition.findById(id);
+    const def = await Definition.findById(id).populate('course', 'title');
     res.send(def);
   })
 );
@@ -85,7 +85,18 @@ app.put(
   '/alldefinitions/:id',
   catchAsync(async (req, res) => {
     const { id } = req.params;
+    const { courseId, oldCourseId } = req.body;
     const updatedDef = await Definition.findByIdAndUpdate(id, { ...req.body });
+    if (courseId !== oldCourseId) {
+      await Course.findByIdAndUpdate(
+        { _id: oldCourseId },
+        { $pull: { definitions: updatedDef._id } }
+      );
+      await Course.findByIdAndUpdate(
+        { _id: courseId },
+        { $addToSet: { definitions: updatedDef._id } }
+      );
+    }
     res.send(updatedDef);
   })
 );
@@ -97,7 +108,7 @@ app.delete(
     const { id } = req.params;
     const deletedDef = await Definition.findByIdAndDelete(id);
     await Course.findByIdAndUpdate(
-      { _id: deletedDef.courseId },
+      { _id: deletedDef.course },
       { $pull: { definitions: deletedDef._id } }
     );
     res.send(deletedDef);
@@ -123,7 +134,10 @@ app.get(
   '/courses/:id',
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const response = await Course.findById(id).populate('definitions').exec();
+    const response = await Course.findById(id).populate({
+      path: 'definitions',
+      populate: { path: 'course', select: 'title' }
+    });
     res.send(response.definitions);
   })
 );

@@ -57,7 +57,7 @@ class Nav extends Component {
       await axios.post('http://localhost:5000/alldefinitions', {
         term,
         definition,
-        courseId: course._id
+        course: course._id
       });
     } catch (err) {
       console.log(err);

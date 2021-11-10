@@ -25,8 +25,7 @@ const seedDB = async () => {
     });
 
     course.definitions.map((def) => {
-      const newDef = new Definition({ courseId: newCourse._id, ...def });
-      console.log(newDef);
+      const newDef = new Definition({ course: newCourse._id, ...def });
       courseArr.push(newDef._id);
       newDef.save();
     });

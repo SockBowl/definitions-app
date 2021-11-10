@@ -23,9 +23,8 @@ class Definition extends Component {
     this.toggleOpenDelete = this.toggleOpenDelete.bind(this);
     this.toggleOpenEdit = this.toggleOpenEdit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleUpdate = this.handleUpdate.bind(this);
   }
-
-  componentDidMount() {}
 
   toggleOpenDelete() {
     this.setState((st) => {
@@ -49,22 +48,36 @@ class Definition extends Component {
     }
   }
 
+  async handleUpdate(id, term, definition, course, oldCourse) {
+    try {
+      await axios.put(`http://localhost:5000/alldefinitions/${id}`, {
+        term,
+        definition,
+        courseId: course._id,
+        oldCourseId: oldCourse._id
+      });
+      this.props.getDefinitions(this.props.courseId);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   render() {
-    const { id, term, definition, courses, classes } = this.props;
+    const { def, courses, classes } = this.props;
     const { openDeleteDialog, openEditModal } = this.state;
     return (
       <React.Fragment>
         <Card className={classes.root}>
           <CardContent>
             <Typography gutterBottom variant='h5' component='h2'>
-              {term}
+              {def.term}
             </Typography>
             <Typography variant='body2' color='textSecondary' component='p'>
-              {definition}
+              {def.definition}
             </Typography>
           </CardContent>
           <CardActions className={classes.buttons}>
-            <Button onClick={this.openEditModal} size='small' color='primary'>
+            <Button onClick={this.toggleOpenEdit} size='small' color='primary'>
               Edit
             </Button>
             <Button
@@ -79,16 +92,15 @@ class Definition extends Component {
         <DeleteDialog
           open={openDeleteDialog}
           toggleOpen={this.toggleOpenDelete}
-          term={term}
-          id={id}
+          term={def.term}
+          id={def._id}
           handleConfirm={this.handleDelete}
         />
         <EditDefinition
           open={openEditModal}
           handleClose={this.toggleOpenEdit}
-          term={term}
-          definition={definition}
-          id={id}
+          handleUpdate={this.handleUpdate}
+          def={def}
           courses={courses}
         />
       </React.Fragment>

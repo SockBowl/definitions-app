@@ -13,33 +13,42 @@ class EditDefinition extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      term: this.props.term,
-      definition: this.props.definition,
-      courseName: this.props.courseName
+      term: this.props.def.term,
+      definition: this.props.def.definition,
+      course: JSON.stringify({
+        title: this.props.def.course.title,
+        _id: this.props.def.course._id
+      }),
+      oldCourse: this.props.def.course
     };
     this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSave = this.handleSave.bind(this);
   }
 
   handleChange(evt) {
     this.setState({ [evt.target.name]: evt.target.value });
   }
 
-  //handleClose and handleAdd have both been passed by Nav.js
-  handleSubmit() {
+  //handleClose and handleUpdate have both been passed by Definition.js
+  handleSave() {
     this.props.handleClose();
-    this.props.handleAdd(
+    this.props.handleUpdate(
+      this.props.def._id,
       this.state.term,
       this.state.definition,
-      this.state.courseName
+      JSON.parse(this.state.course),
+      this.state.oldCourse
     );
   }
 
   render() {
-    const { courseName } = this.state;
+    const { course, term, definition } = this.state;
     const { open, handleClose, courses } = this.props;
     const menuItems = courses.map((course) => (
-      <MenuItem value={course.title} key={course._id}>
+      <MenuItem
+        value={JSON.stringify({ title: course.title, _id: course._id })}
+        key={course._id}
+      >
         {course.title}
       </MenuItem>
     ));
@@ -58,6 +67,7 @@ class EditDefinition extends Component {
               name='term'
               label='Term'
               type='text'
+              value={term}
               fullWidth
               onChange={this.handleChange}
             />
@@ -67,6 +77,7 @@ class EditDefinition extends Component {
               name='definition'
               label='Definition'
               type='text'
+              value={definition}
               multiline
               rows={4}
               fullWidth
@@ -76,8 +87,9 @@ class EditDefinition extends Component {
             <Select
               labelId='course-label'
               id='course-select'
-              name='courseName'
-              value={courseName}
+              name='course'
+              value={course || ''} // THIS IS NEEDED FOR STRINGIFIED OBJECT
+              defaultValue={''}
               onChange={this.handleChange}
               fullWidth
             >
@@ -88,8 +100,8 @@ class EditDefinition extends Component {
             <Button onClick={handleClose} color='primary'>
               Cancel
             </Button>
-            <Button onClick={this.handleSubmit} color='primary'>
-              Add
+            <Button onClick={this.handleSave} color='primary'>
+              Save
             </Button>
           </DialogActions>
         </Dialog>

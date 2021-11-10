@@ -49,16 +49,13 @@ class ListDefs extends Component {
     const { courseTitle, courses } = this.props;
     const allDefinitions = definitions.map((def) => (
       <Definition
-        term={def.term}
-        definition={def.definition}
-        id={def._id}
+        def={def}
         courseId={courseId}
         key={def._id}
         getDefinitions={this.getDefinitions}
         courses={courses}
       />
     ));
-
     return (
       <div>
         <h1>{courseTitle}</h1>
