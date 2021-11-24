@@ -75,13 +75,14 @@ class App extends Component {
         getCourses={this.getCourses}
       >
         <Switch>
-          <Route exact path='/' render={() => <Search />} />
+          <Route exact path='/' render={() => <Search courses={courses} />} />
           <Route
             exact
             path='/AllDefinitions'
             render={() => (
               <ListDefs
                 courseTitle={'All Definitions'}
+                id={'alldefs'}
                 updateDefs={updateDefs}
                 setUpdateDefsFalse={this.setUpdateDefsFalse}
                 courses={courses}

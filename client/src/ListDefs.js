@@ -27,18 +27,19 @@ class ListDefs extends Component {
 
   async getDefinitions() {
     const { courseId } = this.state;
+    const { searchTerm } = this.props;
+    let response;
     try {
-      if (courseId === undefined) {
-        const response = await axios.get(
-          'http://localhost:5000/alldefinitions'
+      if (courseId === 'alldefs') {
+        response = await axios.get('http://localhost:5000/alldefinitions');
+      } else if (courseId === 'search') {
+        response = await axios.get(
+          `http://localhost:5000/search?term=${searchTerm}`
         );
-        this.setState({ definitions: response.data });
       } else {
-        const response = await axios.get(
-          `http://localhost:5000/courses/${courseId}`
-        );
-        this.setState({ definitions: response.data });
+        response = await axios.get(`http://localhost:5000/courses/${courseId}`);
       }
+      this.setState({ definitions: response.data });
     } catch (err) {
       console.log(err);
     }

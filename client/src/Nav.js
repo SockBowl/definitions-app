@@ -220,7 +220,7 @@ class Nav extends Component {
           })}
         >
           <div className={classes.drawerHeader} />
-          <Container maxWidth='md'>{children}</Container>
+          <Container>{children}</Container>
         </main>
       </div>
     );
