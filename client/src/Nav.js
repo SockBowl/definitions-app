@@ -15,6 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Container from '@material-ui/core/Container';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 
 import NewDefinition from './NewDefinition';
@@ -25,6 +26,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import AddIcon from '@material-ui/icons/Add';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import MenuIcon from '@material-ui/icons/Menu';
+import HomeRoundedIcon from '@material-ui/icons/HomeRounded';
 
 //styling
 import styles from './styles/NavStyles.js';
@@ -116,10 +118,17 @@ class Nav extends Component {
               <MenuIcon />
             </IconButton>
             <Typography variant='h6' className={classes.title} noWrap>
-              Show More
+              <Button
+                color='inherit'
+                startIcon={<HomeRoundedIcon />}
+                component={Link}
+                to={'/'}
+              >
+                Home
+              </Button>
             </Typography>
             <IconButton
-              aria-label='account of current user'
+              aria-label='add button'
               aria-controls='menu-appbar'
               aria-haspopup='true'
               onClick={this.openAddMenu}
