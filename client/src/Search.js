@@ -16,6 +16,7 @@ class Search extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
+      inputVal: '',
       searchTerm: '',
       search: false
     };
@@ -26,7 +27,8 @@ class Search extends Component {
   }
 
   handleSubmit(evt) {
-    evt.preventDefault();
+    // evt.preventDefault();
+    console.log(evt);
     this.setState({ search: true });
   }
 

@@ -8,6 +8,7 @@ class ListDefs extends Component {
     this.state = {
       definitions: [],
       courseId: this.props.id
+      // searchTerm: this.props.searchTerm
     };
     this.getDefinitions = this.getDefinitions.bind(this);
   }
@@ -16,13 +17,15 @@ class ListDefs extends Component {
     this.getDefinitions();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     //a very janky way of re-rendering listdefs when adding a new definition.
     //function is passed from App.js
     if (this.props.updateDefs) {
       this.getDefinitions();
       this.props.setUpdateDefsFalse();
     }
+    console.log(this.props.searchTerm);
+    console.log(prevProps);
   }
 
   async getDefinitions() {

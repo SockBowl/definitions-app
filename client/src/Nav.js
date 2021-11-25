@@ -20,8 +20,6 @@ import { Link } from 'react-router-dom';
 import NewDefinition from './NewDefinition';
 import NewCourse from './NewCourse';
 
-import axios from 'axios';
-
 //icons
 import DescriptionIcon from '@material-ui/icons/Description';
 import AddIcon from '@material-ui/icons/Add';
@@ -46,34 +44,8 @@ class Nav extends Component {
     this.closeAddMenu = this.closeAddMenu.bind(this);
     this.openAddDefDialog = this.openAddDefDialog.bind(this);
     this.closeAddDefDialog = this.closeAddDefDialog.bind(this);
-    this.handleNewDefinition = this.handleNewDefinition.bind(this);
     this.openAddCourseDialog = this.openAddCourseDialog.bind(this);
     this.closeAddCourseDialog = this.closeAddCourseDialog.bind(this);
-    this.handleNewCourse = this.handleNewCourse.bind(this);
-  }
-
-  async handleNewDefinition(term, definition, course) {
-    try {
-      await axios.post('http://localhost:5000/alldefinitions', {
-        term,
-        definition,
-        course: course._id
-      });
-    } catch (err) {
-      console.log(err);
-    }
-    // a very janky way of re-rendering ListDefs.js when adding a new definition.
-    // function is passed from App.js
-    this.props.setUpdateDefsTrue();
-  }
-
-  async handleNewCourse(title) {
-    try {
-      await axios.post('http://localhost:5000/allcourses', { title });
-    } catch (err) {
-      console.log(err);
-    }
-    this.props.getCourses();
   }
 
   toggleDrawer() {
@@ -107,7 +79,8 @@ class Nav extends Component {
   }
 
   render() {
-    const { classes, children, courses } = this.props;
+    const { classes, children, courses, handleNewDefinition, handleNewCourse } =
+      this.props;
     const { openDrawer, openMenu, openAddDef, openAddCourse, anchorElement } =
       this.state;
 
@@ -179,13 +152,13 @@ class Nav extends Component {
             <NewDefinition
               open={openAddDef}
               handleClose={this.closeAddDefDialog}
-              handleAdd={this.handleNewDefinition}
+              handleAdd={handleNewDefinition}
               courses={courses}
             />
             <NewCourse
               open={openAddCourse}
               handleClose={this.closeAddCourseDialog}
-              handleNewCourse={this.handleNewCourse}
+              handleNewCourse={handleNewCourse}
             />
           </Toolbar>
         </AppBar>

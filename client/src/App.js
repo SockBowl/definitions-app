@@ -15,6 +15,8 @@ class App extends Component {
     this.getCourses = this.getCourses.bind(this);
     this.setUpdateDefsTrue = this.setUpdateDefsTrue.bind(this);
     this.setUpdateDefsFalse = this.setUpdateDefsFalse.bind(this);
+    this.handleNewDefinition = this.handleNewDefinition.bind(this);
+    this.handleNewCourse = this.handleNewCourse.bind(this);
   }
 
   componentDidMount() {
@@ -30,6 +32,28 @@ class App extends Component {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  async handleNewDefinition(term, definition, course) {
+    try {
+      await axios.post('http://localhost:5000/alldefinitions', {
+        term,
+        definition,
+        course: course._id
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    this.setUpdateDefsTrue();
+  }
+
+  async handleNewCourse(title) {
+    try {
+      await axios.post('http://localhost:5000/allcourses', { title });
+    } catch (err) {
+      console.log(err);
+    }
+    this.getCourses();
   }
 
   //Using the state to re-render list defs when a new definition is added
@@ -73,6 +97,8 @@ class App extends Component {
         courses={courses}
         setUpdateDefsTrue={this.setUpdateDefsTrue}
         getCourses={this.getCourses}
+        handleNewDefinition={this.handleNewDefinition}
+        handleNewCourse={this.handleNewCourse}
       >
         <Switch>
           <Route exact path='/' render={() => <Search courses={courses} />} />
