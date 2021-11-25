@@ -8,7 +8,6 @@ class ListDefs extends Component {
     this.state = {
       definitions: [],
       courseId: this.props.id
-      // searchTerm: this.props.searchTerm
     };
     this.getDefinitions = this.getDefinitions.bind(this);
   }
@@ -17,28 +16,19 @@ class ListDefs extends Component {
     this.getDefinitions();
   }
 
-  componentDidUpdate(prevProps) {
-    //a very janky way of re-rendering listdefs when adding a new definition.
-    //function is passed from App.js
+  componentDidUpdate() {
     if (this.props.updateDefs) {
       this.getDefinitions();
       this.props.setUpdateDefsFalse();
     }
-    console.log(this.props.searchTerm);
-    console.log(prevProps);
   }
 
   async getDefinitions() {
     const { courseId } = this.state;
-    const { searchTerm } = this.props;
     let response;
     try {
       if (courseId === 'alldefs') {
         response = await axios.get('http://localhost:5000/alldefinitions');
-      } else if (courseId === 'search') {
-        response = await axios.get(
-          `http://localhost:5000/search?term=${searchTerm}`
-        );
       } else {
         response = await axios.get(`http://localhost:5000/courses/${courseId}`);
       }

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { withStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Container from '@material-ui/core/Container';
 
-import ListDefs from './ListDefs';
+import Definition from './Definition';
 
 //styling
 import styles from './styles/SearchStyles';
@@ -15,26 +16,53 @@ class Search extends Component {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.getDefs = this.getDefs.bind(this);
+
     this.state = {
-      inputVal: '',
       searchTerm: '',
+      definitions: [],
       search: false
     };
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.searchTerm !== prevState.searchTerm) {
+      this.getDefs(this.state.searchTerm);
+    }
+    if (this.state.searchTerm === '' && this.state.definitions.length !== 0) {
+      this.setState({ definitions: [] });
+    }
+  }
+
+  async getDefs(term) {
+    const response = await axios.get(
+      `http://localhost:5000/search?term=${term}`
+    );
+    this.setState({ definitions: response.data });
+  }
   handleChange(evt) {
     this.setState({ searchTerm: evt.target.value });
   }
 
   handleSubmit(evt) {
-    // evt.preventDefault();
-    console.log(evt);
+    evt.preventDefault();
     this.setState({ search: true });
   }
 
   render() {
     const { classes, courses } = this.props;
-    const { searchTerm, search } = this.state;
+    const { searchTerm, definitions } = this.state;
+
+    const defs = definitions.map((def) => (
+      <Definition
+        def={def}
+        courseId={def.courseId}
+        key={def._id}
+        getDefinitions={this.getDefinitions}
+        courses={courses}
+      />
+    ));
+
     return (
       <div className={classes.root}>
         <Box className={classes.formContainer} component='form'>
@@ -56,11 +84,14 @@ class Search extends Component {
             Search
           </Button>
         </Box>
-        <div className={clsx({ [classes.listDefs]: search })}>
-          {search && (
+        <Container>
+          <div className={classes.listDefs}>
+            {/* {search && (
             <ListDefs id={'search'} courses={courses} searchTerm={searchTerm} />
-          )}
-        </div>
+          )} */}
+            {defs}
+          </div>
+        </Container>
       </div>
     );
   }

@@ -3,20 +3,18 @@ const styles = (theme) => ({
     width: '100%',
     height: '80vh',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    transition: 'all s'
   },
   formContainer: {
     width: '100%',
-    height: '80%',
-
+    // height: '80%',
+    flex: 1,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
   },
-  // listDefs: {
-  //   flex: 5
-  // },
   input: {
     margin: theme.spacing(1),
     height: 50
