@@ -59,7 +59,7 @@ class EditDefinition extends Component {
 
   render() {
     const { course, term, definition } = this.state;
-    const { open, handleClose, courses } = this.props;
+    const { open, courses } = this.props;
     const menuItems = courses.map((course) => (
       <MenuItem
         value={JSON.stringify({ title: course.title, _id: course._id })}
