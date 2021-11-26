@@ -46,7 +46,6 @@ class Search extends Component {
   }
 
   handleSubmit(evt) {
-    console.log(evt.target.elements.searchInput.value);
     this.setState({ searchTerm: evt.target.elements.searchInput.value });
     evt.preventDefault();
   }

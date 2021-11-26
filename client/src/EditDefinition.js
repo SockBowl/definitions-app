@@ -23,10 +23,26 @@ class EditDefinition extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
 
   handleChange(evt) {
     this.setState({ [evt.target.name]: evt.target.value });
+  }
+
+  handleCancel() {
+    this.props.handleClose();
+    //Timeout because reverting changes is visible during the dialog closing animation.
+    setTimeout(() => {
+      this.setState({
+        term: this.props.def.term,
+        definition: this.props.def.definition,
+        course: JSON.stringify({
+          title: this.props.def.course.title,
+          _id: this.props.def.course._id
+        })
+      });
+    }, 500);
   }
 
   //handleClose and handleUpdate have both been passed by Definition.js
@@ -56,7 +72,7 @@ class EditDefinition extends Component {
       <div>
         <Dialog
           open={open}
-          onClose={handleClose}
+          onClose={this.handleCancel}
           aria-labelledby='form-dialog-title'
         >
           <DialogTitle id='form-dialog-title'>Add New Definition</DialogTitle>
@@ -97,7 +113,7 @@ class EditDefinition extends Component {
             </Select>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color='primary'>
+            <Button onClick={this.handleCancel} color='primary'>
               Cancel
             </Button>
             <Button onClick={this.handleSave} color='primary'>
