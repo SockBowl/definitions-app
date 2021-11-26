@@ -86,7 +86,10 @@ app.put(
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const { courseId, oldCourseId } = req.body;
-    const updatedDef = await Definition.findByIdAndUpdate(id, { ...req.body });
+    const updatedDef = await Definition.findByIdAndUpdate(id, {
+      ...req.body,
+      course: courseId
+    });
     if (courseId !== oldCourseId) {
       await Course.findByIdAndUpdate(
         { _id: oldCourseId },
