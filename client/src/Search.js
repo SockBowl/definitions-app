@@ -19,6 +19,7 @@ class Search extends Component {
     this.getDefs = this.getDefs.bind(this);
 
     this.state = {
+      inputVal: '',
       searchTerm: '',
       definitions: [],
       search: false
@@ -41,17 +42,18 @@ class Search extends Component {
     this.setState({ definitions: response.data });
   }
   handleChange(evt) {
-    this.setState({ searchTerm: evt.target.value });
+    this.setState({ inputVal: evt.target.value });
   }
 
   handleSubmit(evt) {
+    console.log(evt.target.elements.searchInput.value);
+    this.setState({ searchTerm: evt.target.elements.searchInput.value });
     evt.preventDefault();
-    this.setState({ search: true });
   }
 
   render() {
     const { classes, courses } = this.props;
-    const { searchTerm, definitions } = this.state;
+    const { inputVal, definitions } = this.state;
 
     const defs = definitions.map((def) => (
       <Definition
@@ -65,21 +67,27 @@ class Search extends Component {
 
     return (
       <div className={classes.root}>
-        <Box className={classes.formContainer} component='form'>
+        <Box
+          className={classes.formContainer}
+          component='form'
+          onSubmit={this.handleSubmit}
+        >
           <TextField
             className={classes.searchInput}
             InputProps={{ className: classes.input }}
             id='outlined-basic'
             variant='outlined'
             type='text'
-            value={searchTerm}
+            value={inputVal}
             onChange={this.handleChange}
+            name='searchInput'
           />
           <Button
             className={classes.input}
             variant='contained'
             size='large'
-            onClick={this.handleSubmit}
+            type='submit'
+            // onClick={this.handleSubmit}
           >
             Search
           </Button>
