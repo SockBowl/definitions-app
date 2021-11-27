@@ -7,7 +7,7 @@ The server side contains a seeds file which when run will seed MongoDB so long a
 
 ### Todo:
 
-* Write functionality to edit definitions
-* Error handling on the client side for api calls
-* Implement Edit/Delete functionality for courses
-* UI styling
+- Error handling on the client side for api calls
+- Implement Delete functionality for courses
+- Combine Edit and new definition components. Do the same for course
+- UI styling

@@ -86,6 +86,7 @@ class App extends Component {
               updateDefs={updateDefs}
               setUpdateDefsFalse={this.setUpdateDefsFalse}
               courses={courses}
+              getCourses={this.getCourses}
             />
           )}
           key={course._id}
@@ -112,6 +113,7 @@ class App extends Component {
                 updateDefs={updateDefs}
                 setUpdateDefsFalse={this.setUpdateDefsFalse}
                 courses={courses}
+                getCourses={this.getCourses}
               />
             )}
           />

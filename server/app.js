@@ -104,6 +104,16 @@ app.put(
   })
 );
 
+//Needs to be tested
+app.put(
+  '/allcourses/:id',
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const updatedCourse = await Course.findByIdAndUpdate(id, { ...req.body });
+    res.send(updatedCourse);
+  })
+);
+
 //delete route to delete definition using id
 app.delete(
   '/alldefinitions/:id',

@@ -21,8 +21,8 @@ class DeleteDialog extends Component {
           <DialogTitle id='alert-dialog-title'>Deleting {term}</DialogTitle>
           <DialogContent>
             <DialogContentText id='alert-dialog-description'>
-              Deletion will permanently remove the term and definition from the
-              database. Are you sure you wish to continue?
+              Deletion is a permanent action and cannot be undone. Are you sure
+              you wish to continue?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
