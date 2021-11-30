@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
-import Definition from './Definition';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Definition from './Definition';
 import EditCourse from './EditCourse';
+import DeleteDialog from './DeleteDialog';
 
 //icons
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
@@ -21,12 +22,13 @@ class ListDefs extends Component {
       definitions: [],
       courseId: this.props.id,
       openEditModal: false,
-      openDeleteModal: false
+      openDeleteDialog: false
     };
     this.getDefinitions = this.getDefinitions.bind(this);
     this.toggleOpenDelete = this.toggleOpenDelete.bind(this);
     this.toggleOpenEdit = this.toggleOpenEdit.bind(this);
     this.handleCourseUpdate = this.handleCourseUpdate.bind(this);
+    this.handleCourseDelete = this.handleCourseDelete.bind(this);
   }
 
   componentDidMount() {
@@ -71,6 +73,16 @@ class ListDefs extends Component {
     this.props.history.replace(title.replace(/\s/g, ''), true);
   }
 
+  async handleCourseDelete(id) {
+    try {
+      await axios.delete(`http://localhost:5000/allcourses/${id}`);
+    } catch (err) {
+      console.log(err);
+    }
+    this.props.getCourses();
+    this.props.history.replace('/', true);
+  }
+
   toggleOpenEdit() {
     this.setState((st) => {
       return { openEditModal: !st.openEditModal };
@@ -79,12 +91,13 @@ class ListDefs extends Component {
 
   toggleOpenDelete() {
     this.setState((st) => {
-      return { openDeleteModal: !st.openDeleteModal };
+      return { openDeleteDialog: !st.openDeleteDialog };
     });
   }
 
   render() {
-    const { definitions, courseId, openEditModal } = this.state;
+    const { definitions, courseId, openEditModal, openDeleteDialog } =
+      this.state;
     const { courseTitle, courses, classes } = this.props;
     const allDefinitions = definitions.map((def) => (
       <Definition
@@ -111,6 +124,7 @@ class ListDefs extends Component {
             className={classes.iconButton}
             aria-label='delete course'
             size='small'
+            onClick={this.toggleOpenDelete}
           >
             <DeleteRoundedIcon />
           </IconButton>
@@ -121,6 +135,13 @@ class ListDefs extends Component {
           handleClose={this.toggleOpenEdit}
           handleCourseUpdate={this.handleCourseUpdate}
           courseTitle={courseTitle}
+        />
+        <DeleteDialog
+          open={openDeleteDialog}
+          toggleOpen={this.toggleOpenDelete}
+          term={courseTitle}
+          id={courseId}
+          handleConfirm={this.handleCourseDelete}
         />
       </div>
     );

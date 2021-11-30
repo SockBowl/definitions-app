@@ -128,6 +128,25 @@ app.delete(
   })
 );
 
+//delete route to delete course using id
+app.delete(
+  '/allcourses/:id',
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const deletedCourse = await Course.findByIdAndDelete(id);
+    const unassignedCourse = await Course.findOneAndUpdate(
+      { title: 'unassigned' },
+      { $addToSet: { definitions: { $each: deletedCourse.definitions } } },
+      { new: true, upsert: true }
+    );
+    await Definition.updateMany(
+      { course: deletedCourse._id },
+      { $set: { course: unassignedCourse._id } }
+    );
+    res.send(unassignedCourse);
+  })
+);
+
 //get route to find a definition by string search
 //regex used to find terms similar to the searched term
 app.get(

@@ -74,11 +74,11 @@ class App extends Component {
   render() {
     const { courses, updateDefs } = this.state;
     const courseRoutes = courses.map((course) => {
-      const title = course.title.replace(/\s+/g, '');
+      const path = course.title.replace(/\s+/g, '');
       return (
         <Route
           exact
-          path={`/${title}`}
+          path={`/${path}`}
           render={() => (
             <ListDefs
               id={course._id}
