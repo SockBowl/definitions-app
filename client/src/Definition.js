@@ -40,7 +40,7 @@ class Definition extends Component {
 
   async handleDelete(id) {
     try {
-      await axios.delete(`http://localhost:5000/alldefinitions/${id}`);
+      await axios.delete(`http://localhost:5000/definitions/${id}`);
       this.toggleOpenDelete();
       this.props.getDefinitions(this.props.courseId);
     } catch (err) {
@@ -50,7 +50,7 @@ class Definition extends Component {
 
   async handleUpdate(id, term, definition, course, oldCourse) {
     try {
-      await axios.put(`http://localhost:5000/alldefinitions/${id}`, {
+      await axios.put(`http://localhost:5000/definitions/${id}`, {
         term,
         definition,
         courseId: course._id,

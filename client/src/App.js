@@ -25,7 +25,7 @@ class App extends Component {
 
   async getCourses() {
     try {
-      let response = await axios.get('http://localhost:5000/allcourses');
+      let response = await axios.get('http://localhost:5000/courses');
       this.setState(() => ({
         courses: [...response.data]
       }));
@@ -36,7 +36,7 @@ class App extends Component {
 
   async handleNewDefinition(term, definition, course) {
     try {
-      await axios.post('http://localhost:5000/alldefinitions', {
+      await axios.post('http://localhost:5000/definitions', {
         term,
         definition,
         course: course._id
@@ -49,7 +49,7 @@ class App extends Component {
 
   async handleNewCourse(title) {
     try {
-      await axios.post('http://localhost:5000/allcourses', { title });
+      await axios.post('http://localhost:5000/courses', { title });
     } catch (err) {
       console.log(err);
     }
@@ -64,7 +64,7 @@ class App extends Component {
     this.setState({ updateDefs: true });
   }
 
-  //This function is passed to ListDefs.js
+  //Because Nav.js can't access specific children this function is passed to ListDefs.js
   //When a new definition is added the state is changed to true from Nav.js
   //ListDefs.js will then re-render and set the state to false from componenetDidUpdate using setUpdateDefsFalse
   setUpdateDefsFalse() {

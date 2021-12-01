@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 
 //get route to find all definitions stored in the DB
 app.get(
-  '/alldefinitions',
+  '/definitions',
   catchAsync(async (req, res) => {
     const defs = await Definition.find({}).populate('course', 'title');
     res.send(defs);
@@ -39,111 +39,42 @@ app.get(
 
 //get route to find all courses stored in the DB
 app.get(
-  '/allcourses',
+  '/courses',
   catchAsync(async (req, res) => {
     const courses = await Course.find({});
     res.send(courses);
   })
 );
 
-//post route to save a new definition to the DB
-app.post(
-  '/alldefinitions',
-  catchAsync(async (req, res) => {
-    const newDef = new Definition(req.body);
-    await newDef.save();
-    await Course.findByIdAndUpdate(
-      { _id: req.body.course },
-      { $push: { definitions: newDef._id } }
-    );
-    res.send(newDef);
-  })
-);
-
-//post route to save a new course to the DB
-app.post(
-  '/allcourses',
-  catchAsync(async (req, res) => {
-    const newCourse = new Course(req.body);
-    await newCourse.save();
-    res.send(newCourse);
-  })
-);
-
 //get route to find a specific definition by the ID
 app.get(
-  '/alldefinitions/:id',
+  '/definitions/:id',
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const def = await Definition.findById(id).populate('course', 'title');
+    //in some cases mongoose will consider invalid ObjectID's valid. (https://stackoverflow.com/questions/13850819/can-i-determine-if-a-string-is-a-mongodb-objectid)
+    //This will catch the valild invalid ObjectID
+    if (!def) {
+      throw new AppError('Data not found', 400);
+    }
     res.send(def);
   })
 );
 
-//put route to update a definition using id
-app.put(
-  '/alldefinitions/:id',
+//get route to find all definitions from a specified course
+//definitions are stored as references in the courses collection
+app.get(
+  '/courses/:id',
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const { courseId, oldCourseId } = req.body;
-    const updatedDef = await Definition.findByIdAndUpdate(id, {
-      ...req.body,
-      course: courseId
+    const course = await Course.findById(id).populate({
+      path: 'definitions',
+      populate: { path: 'course', select: 'title' }
     });
-    if (courseId !== oldCourseId) {
-      await Course.findByIdAndUpdate(
-        { _id: oldCourseId },
-        { $pull: { definitions: updatedDef._id } }
-      );
-      await Course.findByIdAndUpdate(
-        { _id: courseId },
-        { $addToSet: { definitions: updatedDef._id } }
-      );
+    if (!course) {
+      throw new AppError('Data not found', 400);
     }
-    res.send(updatedDef);
-  })
-);
-
-//Needs to be tested
-app.put(
-  '/allcourses/:id',
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const updatedCourse = await Course.findByIdAndUpdate(id, { ...req.body });
-    res.send(updatedCourse);
-  })
-);
-
-//delete route to delete definition using id
-app.delete(
-  '/alldefinitions/:id',
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const deletedDef = await Definition.findByIdAndDelete(id);
-    await Course.findByIdAndUpdate(
-      { _id: deletedDef.course },
-      { $pull: { definitions: deletedDef._id } }
-    );
-    res.send(deletedDef);
-  })
-);
-
-//delete route to delete course using id
-app.delete(
-  '/allcourses/:id',
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const deletedCourse = await Course.findByIdAndDelete(id);
-    const unassignedCourse = await Course.findOneAndUpdate(
-      { title: 'unassigned' },
-      { $addToSet: { definitions: { $each: deletedCourse.definitions } } },
-      { new: true, upsert: true }
-    );
-    await Definition.updateMany(
-      { course: deletedCourse._id },
-      { $set: { course: unassignedCourse._id } }
-    );
-    res.send(unassignedCourse);
+    res.send(course.definitions);
   })
 );
 
@@ -160,22 +91,137 @@ app.get(
   })
 );
 
-//get route to find all definitions from a specified course
-//definitions are stored as references in the courses collection
-app.get(
+//post route to save a new definition to the DB
+app.post(
+  '/definitions',
+  catchAsync(async (req, res) => {
+    const newDef = new Definition(req.body);
+    const updatedCourse = await Course.findByIdAndUpdate(
+      { _id: req.body.course },
+      { $push: { definitions: newDef._id } }
+    );
+
+    if (!updatedCourse) {
+      throw new AppError('Data not found', 400);
+    }
+
+    await newDef.save();
+    res.send(newDef);
+  })
+);
+
+//post route to save a new course to the DB
+app.post(
+  '/courses',
+  catchAsync(async (req, res) => {
+    const newCourse = new Course(req.body);
+    await newCourse.save();
+    res.send(newCourse);
+  })
+);
+
+//put route to update a definition using id
+app.put(
+  '/definitions/:id',
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const { courseId, oldCourseId } = req.body;
+    const updatedDef = await Definition.findByIdAndUpdate(id, {
+      ...req.body,
+      course: courseId
+    });
+
+    if (!updatedCourse) {
+      throw new AppError('Data not found', 400);
+    }
+
+    if (courseId !== oldCourseId) {
+      const oldCourse = await Course.findByIdAndUpdate(
+        { _id: oldCourseId },
+        { $pull: { definitions: updatedDef._id } }
+      );
+      const updatedCourse = await Course.findByIdAndUpdate(
+        { _id: courseId },
+        { $addToSet: { definitions: updatedDef._id } }
+      );
+
+      if (!oldCourse || !updatedCourse) {
+        throw new AppError('Data not found', 400);
+      }
+    }
+    res.send(updatedDef);
+  })
+);
+
+//Update route for course title
+app.put(
   '/courses/:id',
   catchAsync(async (req, res) => {
     const { id } = req.params;
-    const response = await Course.findById(id).populate({
-      path: 'definitions',
-      populate: { path: 'course', select: 'title' }
+    const updatedCourse = await Course.findByIdAndUpdate(id, {
+      ...req.body
     });
-    res.send(response.definitions);
+
+    if (!updatedCourse) {
+      throw new AppError('Data not found', 400);
+    }
+
+    res.send(updatedCourse);
+  })
+);
+
+//delete route to delete definition using id
+app.delete(
+  '/definitions/:id',
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const deletedDef = await Definition.findByIdAndDelete(id);
+
+    if (!deletedDef) {
+      throw new AppError('Data not found', 400);
+    }
+
+    const updatedCourse = await Course.findByIdAndUpdate(
+      { _id: deletedDef.course },
+      { $pull: { definitions: deletedDef._id } }
+    );
+
+    if (!updatedCourse) {
+      throw new AppError('Data not found', 400);
+    }
+
+    res.send(deletedDef);
+  })
+);
+
+//delete route to delete course using id
+app.delete(
+  '/courses/:id',
+  catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const deletedCourse = await Course.findByIdAndDelete(id);
+
+    if (!deletedCourse) {
+      throw new AppError('Data not found', 400);
+    }
+
+    const unassignedCourse = await Course.findOneAndUpdate(
+      { title: 'unassigned' },
+      { $addToSet: { definitions: { $each: deletedCourse.definitions } } },
+      { new: true, upsert: true }
+    );
+
+    await Definition.updateMany(
+      { course: deletedCourse._id },
+      { $set: { course: unassignedCourse._id } }
+    );
+
+    res.send(unassignedCourse);
   })
 );
 
 app.all('*', (req, res, next) => {
-  next(new AppError('Page Not Found', 404));
+  next(new AppError('Not Found', 404));
 });
 
 app.use((err, req, res, next) => {

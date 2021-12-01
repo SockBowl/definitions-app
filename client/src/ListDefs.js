@@ -47,7 +47,7 @@ class ListDefs extends Component {
     let response;
     try {
       if (courseId === 'alldefs') {
-        response = await axios.get('http://localhost:5000/alldefinitions');
+        response = await axios.get('http://localhost:5000/definitions');
       } else {
         response = await axios.get(`http://localhost:5000/courses/${courseId}`);
       }
@@ -63,7 +63,7 @@ class ListDefs extends Component {
     console.log(this.props.history);
     const { courseId } = this.state;
     try {
-      await axios.put(`http://localhost:5000/allcourses/${courseId}`, {
+      await axios.put(`http://localhost:5000/courses/${courseId}`, {
         title
       });
     } catch (err) {
@@ -75,7 +75,7 @@ class ListDefs extends Component {
 
   async handleCourseDelete(id) {
     try {
-      await axios.delete(`http://localhost:5000/allcourses/${id}`);
+      await axios.delete(`http://localhost:5000/courses/${id}`);
     } catch (err) {
       console.log(err);
     }
