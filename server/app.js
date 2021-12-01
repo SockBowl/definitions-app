@@ -55,7 +55,7 @@ app.get(
     //in some cases mongoose will consider invalid ObjectID's valid. (https://stackoverflow.com/questions/13850819/can-i-determine-if-a-string-is-a-mongodb-objectid)
     //This will catch the valild invalid ObjectID
     if (!def) {
-      throw new AppError('Data not found', 400);
+      throw new AppError('Data not found', 404);
     }
     res.send(def);
   })
@@ -72,7 +72,7 @@ app.get(
       populate: { path: 'course', select: 'title' }
     });
     if (!course) {
-      throw new AppError('Data not found', 400);
+      throw new AppError('Data not found', 404);
     }
     res.send(course.definitions);
   })
@@ -102,7 +102,7 @@ app.post(
     );
 
     if (!updatedCourse) {
-      throw new AppError('Data not found', 400);
+      throw new AppError('Data not found', 404);
     }
 
     await newDef.save();
@@ -132,7 +132,7 @@ app.put(
     });
 
     if (!updatedCourse) {
-      throw new AppError('Data not found', 400);
+      throw new AppError('Data not found', 404);
     }
 
     if (courseId !== oldCourseId) {
@@ -146,7 +146,7 @@ app.put(
       );
 
       if (!oldCourse || !updatedCourse) {
-        throw new AppError('Data not found', 400);
+        throw new AppError('Data not found', 404);
       }
     }
     res.send(updatedDef);
@@ -163,7 +163,7 @@ app.put(
     });
 
     if (!updatedCourse) {
-      throw new AppError('Data not found', 400);
+      throw new AppError('Data not found', 404);
     }
 
     res.send(updatedCourse);
@@ -178,7 +178,7 @@ app.delete(
     const deletedDef = await Definition.findByIdAndDelete(id);
 
     if (!deletedDef) {
-      throw new AppError('Data not found', 400);
+      throw new AppError('Data not found', 404);
     }
 
     const updatedCourse = await Course.findByIdAndUpdate(
@@ -187,7 +187,7 @@ app.delete(
     );
 
     if (!updatedCourse) {
-      throw new AppError('Data not found', 400);
+      throw new AppError('Data not found', 404);
     }
 
     res.send(deletedDef);
@@ -202,7 +202,7 @@ app.delete(
     const deletedCourse = await Course.findByIdAndDelete(id);
 
     if (!deletedCourse) {
-      throw new AppError('Data not found', 400);
+      throw new AppError('Data not found', 404);
     }
 
     const unassignedCourse = await Course.findOneAndUpdate(

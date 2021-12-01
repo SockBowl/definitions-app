@@ -7,7 +7,7 @@ module.exports = (fn) => {
     fn(req, res, next).catch((err) => {
       //catches invalid ObjectID's
       if (err instanceof mongoose.Error.CastError) {
-        err = new AppError('Data not found', 400);
+        err = new AppError('Data not found', 404);
       }
       next(err);
     });
