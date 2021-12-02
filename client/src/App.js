@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import Nav from './Nav';
 import Search from './Search';
 import ListDefs from './ListDefs';
+import NotFound from './NotFound';
 import axios from 'axios';
 
 class App extends Component {
@@ -73,26 +74,6 @@ class App extends Component {
 
   render() {
     const { courses, updateDefs } = this.state;
-    const courseRoutes = courses.map((course) => {
-      const path = course.title.replace(/\s+/g, '');
-      return (
-        <Route
-          exact
-          path={`/${path}`}
-          render={() => (
-            <ListDefs
-              id={course._id}
-              courseTitle={course.title}
-              updateDefs={updateDefs}
-              setUpdateDefsFalse={this.setUpdateDefsFalse}
-              courses={courses}
-              getCourses={this.getCourses}
-            />
-          )}
-          key={course._id}
-        />
-      );
-    });
     return (
       <Nav
         courses={courses}
@@ -117,7 +98,27 @@ class App extends Component {
               />
             )}
           />
-          {courseRoutes}
+          {courses.map((course) => {
+            const path = course.title.replace(/\s+/g, '');
+            return (
+              <Route
+                exact
+                path={`/${path}`}
+                render={() => (
+                  <ListDefs
+                    id={course._id}
+                    courseTitle={course.title}
+                    updateDefs={updateDefs}
+                    setUpdateDefsFalse={this.setUpdateDefsFalse}
+                    courses={courses}
+                    getCourses={this.getCourses}
+                  />
+                )}
+                key={course._id}
+              />
+            );
+          })}
+          <Route render={() => <NotFound />} />
         </Switch>
       </Nav>
     );

@@ -50,12 +50,16 @@ class Definition extends Component {
 
   async handleUpdate(id, term, definition, course, oldCourse) {
     try {
-      await axios.put(`http://localhost:5000/definitions/${id}`, {
-        term,
-        definition,
-        courseId: course._id,
-        oldCourseId: oldCourse._id
-      });
+      const updatedDef = await axios.put(
+        `http://localhost:5000/definitions/${id}`,
+        {
+          term,
+          definition,
+          courseId: course._id,
+          oldCourseId: oldCourse._id
+        }
+      );
+      console.log(updatedDef);
       this.props.getDefinitions(this.props.courseId);
     } catch (err) {
       console.log(err);

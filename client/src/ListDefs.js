@@ -60,27 +60,26 @@ class ListDefs extends Component {
   //Replaces title in the db then replaces the browser history so the url is consistent with the new title.
   //uses regex to remove whitespace for url.
   async handleCourseUpdate(title) {
-    console.log(this.props.history);
     const { courseId } = this.state;
     try {
       await axios.put(`http://localhost:5000/courses/${courseId}`, {
         title
       });
+      this.props.getCourses();
+      this.props.history.replace(title.replace(/\s/g, ''), true);
     } catch (err) {
       console.log(err);
     }
-    this.props.getCourses();
-    this.props.history.replace(title.replace(/\s/g, ''), true);
   }
 
   async handleCourseDelete(id) {
     try {
       await axios.delete(`http://localhost:5000/courses/${id}`);
+      this.props.getCourses();
+      this.props.history.replace('/', true);
     } catch (err) {
       console.log(err);
     }
-    this.props.getCourses();
-    this.props.history.replace('/', true);
   }
 
   toggleOpenEdit() {

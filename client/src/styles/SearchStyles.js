@@ -3,12 +3,11 @@ const styles = (theme) => ({
     width: '100%',
     height: '80vh',
     display: 'flex',
-    flexDirection: 'column',
-    transition: 'all s'
+    flexDirection: 'column'
   },
   formContainer: {
     width: '100%',
-    // height: '80%',
+    height: '80%',
     flex: 1,
     display: 'flex',
     flexDirection: 'row',

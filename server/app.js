@@ -130,8 +130,7 @@ app.put(
       ...req.body,
       course: courseId
     });
-
-    if (!updatedCourse) {
+    if (!updatedDef) {
       throw new AppError('Data not found', 404);
     }
 
