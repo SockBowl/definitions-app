@@ -7,8 +7,11 @@ const styles = {
     alignItems: 'center',
     flexDirection: 'column'
   },
-  title: {
+  heading: {
     fontSize: '10rem'
+  },
+  subheading: {
+    fontSize: '2rem'
   }
 };
 

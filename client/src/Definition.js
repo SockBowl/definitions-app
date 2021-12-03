@@ -42,27 +42,27 @@ class Definition extends Component {
     try {
       await axios.delete(`http://localhost:5000/definitions/${id}`);
       this.toggleOpenDelete();
+      this.props.snackAlert('warning', 'Definition was deleted!');
       this.props.getDefinitions(this.props.courseId);
     } catch (err) {
-      console.log(err);
+      this.props.snackAlert('error', 'Uh oh, something went wrong!');
+      // console.log(err);
     }
   }
 
   async handleUpdate(id, term, definition, course, oldCourse) {
     try {
-      const updatedDef = await axios.put(
-        `http://localhost:5000/definitions/${id}`,
-        {
-          term,
-          definition,
-          courseId: course._id,
-          oldCourseId: oldCourse._id
-        }
-      );
-      console.log(updatedDef);
+      await axios.put(`http://localhost:5000/definitions/${id}`, {
+        term,
+        definition,
+        courseId: course._id,
+        oldCourseId: oldCourse._id
+      });
+      this.props.snackAlert('success', 'Definition was updated!');
       this.props.getDefinitions(this.props.courseId);
     } catch (err) {
-      console.log(err);
+      this.props.snackAlert('error', 'Uh oh, something went wrong!');
+      // console.log(err);
     }
   }
 

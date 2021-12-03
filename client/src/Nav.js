@@ -87,9 +87,15 @@ class Nav extends Component {
       this.state;
 
     const displayCourses = courses.map((course) => {
-      const title = course.title.replace(/\s+/g, '');
+      const path = course.title.replace(/\s+/g, '');
+      if (
+        course.title.toLowerCase() === 'unassigned' &&
+        course.definitions.length === 0
+      ) {
+        return '';
+      }
       return (
-        <ListItem button component={Link} to={`/${title}`} key={course._id}>
+        <ListItem button component={Link} to={`/${path}`} key={course._id}>
           <ListItemIcon>
             <DescriptionIcon />
           </ListItemIcon>

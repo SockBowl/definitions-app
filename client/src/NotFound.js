@@ -8,10 +8,12 @@ class NotFound extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <Typography className={classes.title} variant='h1'>
+        <Typography className={classes.heading} variant='h1'>
           404
         </Typography>
-        <Typography variant='h4'>Page Not Found</Typography>
+        <Typography className={classes.subheading} variant='h4'>
+          Page Not Found
+        </Typography>
       </div>
     );
   }

@@ -62,13 +62,16 @@ class ListDefs extends Component {
   async handleCourseUpdate(title) {
     const { courseId } = this.state;
     try {
-      await axios.put(`http://localhost:5000/courses/${courseId}`, {
+      const res = await axios.put(`http://localhost:5000/courses/${courseId}`, {
         title
       });
+      console.log(res);
       this.props.getCourses();
+      this.props.snackAlert('success', 'Course title was updated!');
       this.props.history.replace(title.replace(/\s/g, ''), true);
     } catch (err) {
-      console.log(err);
+      this.props.snackAlert('error', 'Uh oh, something went wrong!');
+      // console.log(err);
     }
   }
 
@@ -76,9 +79,11 @@ class ListDefs extends Component {
     try {
       await axios.delete(`http://localhost:5000/courses/${id}`);
       this.props.getCourses();
+      this.props.snackAlert('warning', 'Course was deleted!');
       this.props.history.replace('/', true);
     } catch (err) {
-      console.log(err);
+      this.props.snackAlert('error', 'Uh oh, something went wrong!');
+      // console.log(err);
     }
   }
 
@@ -97,7 +102,7 @@ class ListDefs extends Component {
   render() {
     const { definitions, courseId, openEditModal, openDeleteDialog } =
       this.state;
-    const { courseTitle, courses, classes } = this.props;
+    const { courseTitle, courses, classes, snackAlert } = this.props;
     const allDefinitions = definitions.map((def) => (
       <Definition
         def={def}
@@ -105,6 +110,7 @@ class ListDefs extends Component {
         key={def._id}
         getDefinitions={this.getDefinitions}
         courses={courses}
+        snackAlert={snackAlert}
       />
     ));
     return (
