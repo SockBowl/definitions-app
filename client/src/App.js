@@ -18,6 +18,7 @@ class App extends Component {
     this.state = {
       courses: [],
       updateDefs: false,
+      updateCourses: false,
       alert: false,
       alertSeverity: '',
       alertMessage: ''
@@ -33,6 +34,13 @@ class App extends Component {
 
   componentDidMount() {
     this.getCourses();
+  }
+
+  componentDidUpdate() {
+    if (this.state.updateCourses) {
+      this.getCourses();
+      this.setState({ updateCourses: false });
+    }
   }
 
   async getCourses() {
@@ -87,6 +95,10 @@ class App extends Component {
     this.setState({ updateDefs: false });
   }
 
+  updateCourses() {
+    this.setState({ updateCourses: true });
+  }
+
   openAlert(severity, message) {
     this.setState({
       alert: true,
@@ -104,80 +116,82 @@ class App extends Component {
     const { courses, updateDefs, alert, alertSeverity, alertMessage } =
       this.state;
     return (
-      <Nav
-        courses={courses}
-        setUpdateDefsTrue={this.setUpdateDefsTrue}
-        getCourses={this.getCourses}
-        handleNewDefinition={this.handleNewDefinition}
-        handleNewCourse={this.handleNewCourse}
-        snackAlert={this.openAlert}
-      >
-        <Switch>
-          <Route exact path='/' render={() => <Search courses={courses} />} />
-          <Route
-            exact
-            path='/AllDefinitions'
-            render={() => (
-              <ListDefs
-                courseTitle={'All Definitions'}
-                id={'alldefs'}
-                updateDefs={updateDefs}
-                setUpdateDefsFalse={this.setUpdateDefsFalse}
-                courses={courses}
-                getCourses={this.getCourses}
-                snackAlert={this.openAlert}
-              />
-            )}
-          />
-          {courses.map((course) => {
-            const path = course.title.replace(/\s+/g, '');
-            if (
-              course.title.toLowerCase() === 'unassigned' &&
-              course.definitions.length === 0
-            ) {
-              return '';
-            }
-            return (
-              <Route
-                exact
-                path={`/${path}`}
-                render={() => (
-                  <ListDefs
-                    id={course._id}
-                    courseTitle={course.title}
-                    updateDefs={updateDefs}
-                    setUpdateDefsFalse={this.setUpdateDefsFalse}
-                    courses={courses}
-                    getCourses={this.getCourses}
-                    snackAlert={this.openAlert}
-                  />
-                )}
-                key={course._id}
-              />
-            );
-          })}
-          <Route render={() => <NotFound />} />
-        </Switch>
-        <Snackbar
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center'
-          }}
-          open={alert}
-          autoHideDuration={6000}
-          onClose={this.closeAlert}
+      <div className={classes.root}>
+        <Nav
+          courses={courses}
+          setUpdateDefsTrue={this.setUpdateDefsTrue}
+          getCourses={this.getCourses}
+          handleNewDefinition={this.handleNewDefinition}
+          handleNewCourse={this.handleNewCourse}
+          snackAlert={this.openAlert}
         >
-          <Alert
-            elevation={6}
-            variant='filled'
-            className={classes.alert}
+          <Switch>
+            <Route exact path='/' render={() => <Search courses={courses} />} />
+            <Route
+              exact
+              path='/AllDefinitions'
+              render={() => (
+                <ListDefs
+                  courseTitle={'All Definitions'}
+                  id={'alldefs'}
+                  updateDefs={updateDefs}
+                  setUpdateDefsFalse={this.setUpdateDefsFalse}
+                  courses={courses}
+                  getCourses={this.getCourses}
+                  snackAlert={this.openAlert}
+                />
+              )}
+            />
+            {courses.map((course) => {
+              const path = course.title.replace(/\s+/g, '');
+              if (
+                course.title.toLowerCase() === 'unassigned' &&
+                course.definitions.length === 0
+              ) {
+                return '';
+              }
+              return (
+                <Route
+                  exact
+                  path={`/${path}`}
+                  render={() => (
+                    <ListDefs
+                      id={course._id}
+                      courseTitle={course.title}
+                      updateDefs={updateDefs}
+                      setUpdateDefsFalse={this.setUpdateDefsFalse}
+                      courses={courses}
+                      getCourses={this.getCourses}
+                      snackAlert={this.openAlert}
+                    />
+                  )}
+                  key={course._id}
+                />
+              );
+            })}
+            <Route render={() => <NotFound />} />
+          </Switch>
+          <Snackbar
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'center'
+            }}
+            open={alert}
+            autoHideDuration={6000}
             onClose={this.closeAlert}
-            severity={alertSeverity}
           >
-            {alertMessage}
-          </Alert>
-        </Snackbar>
-      </Nav>
+            <Alert
+              elevation={6}
+              variant='filled'
+              className={classes.alert}
+              onClose={this.closeAlert}
+              severity={alertSeverity}
+            >
+              {alertMessage}
+            </Alert>
+          </Snackbar>
+        </Nav>
+      </div>
     );
   }
 }

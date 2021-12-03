@@ -14,25 +14,37 @@ class NewCourse extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
 
   handleChange(evt) {
     this.setState({ [evt.target.name]: evt.target.value });
   }
 
+  handleCancel() {
+    this.props.handleClose();
+    //Timeout because reverting changes is visible during the dialog closing animation.
+    setTimeout(() => {
+      this.setState({ title: '' });
+    }, 500);
+  }
+
   //handleClose and handleAdd have both been passed by Nav.js
   handleSubmit() {
     this.props.handleClose();
     this.props.handleNewCourse(this.state.title);
+    setTimeout(() => {
+      this.setState({ title: '' });
+    }, 500);
   }
 
   render() {
-    const { open, handleClose } = this.props;
+    const { open } = this.props;
     const { title } = this.state;
     return (
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={this.handleCancel}
         aria-labelledby='form-dialog-title'
         maxWidth={'xs'}
         fullWidth
@@ -51,7 +63,7 @@ class NewCourse extends Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='primary'>
+          <Button onClick={this.handleCancel} color='primary'>
             Cancel
           </Button>
           <Button onClick={this.handleSubmit} color='primary'>

@@ -122,6 +122,7 @@ class ListDefs extends Component {
             aria-label='edit course title'
             size='small'
             onClick={this.toggleOpenEdit}
+            disabled={courseTitle.toLowerCase() === 'unassigned'}
           >
             <EditRoundedIcon />
           </IconButton>

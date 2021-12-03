@@ -19,10 +19,19 @@ class NewDefinition extends Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
 
   handleChange(evt) {
     this.setState({ [evt.target.name]: evt.target.value });
+  }
+
+  handleCancel() {
+    this.props.handleClose();
+    //Timeout because reverting changes is visible during the dialog closing animation.
+    setTimeout(() => {
+      this.setState({ term: '', definition: '', course: '' });
+    }, 500);
   }
 
   //handleClose and handleAdd have both been passed by Nav.js
@@ -38,20 +47,25 @@ class NewDefinition extends Component {
 
   render() {
     const { course } = this.state;
-    const { open, handleClose, courses } = this.props;
-    const menuItems = courses.map((course) => (
-      <MenuItem
-        value={JSON.stringify({ title: course.title, _id: course._id })}
-        key={course._id}
-      >
-        {course.title}
-      </MenuItem>
-    ));
+    const { open, courses } = this.props;
+    const menuItems = courses.map((course) => {
+      if (course.title.toLowerCase() === 'unassigned') {
+        return '';
+      }
+      return (
+        <MenuItem
+          value={JSON.stringify({ title: course.title, _id: course._id })}
+          key={course._id}
+        >
+          {course.title}
+        </MenuItem>
+      );
+    });
     return (
       <div>
         <Dialog
           open={open}
-          onClose={handleClose}
+          onClose={this.handleCancel}
           aria-labelledby='form-dialog-title'
         >
           <DialogTitle id='form-dialog-title'>Add New Definition</DialogTitle>
@@ -90,7 +104,7 @@ class NewDefinition extends Component {
             </Select>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color='primary'>
+            <Button onClick={this.handleCancel} color='primary'>
               Cancel
             </Button>
             <Button onClick={this.handleSubmit} color='primary'>

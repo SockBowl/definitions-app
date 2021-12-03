@@ -1,5 +1,6 @@
 const styles = {
   title: {
+    // color: 'white',
     '&:hover': {
       '& $iconButton': {
         display: 'inline'
